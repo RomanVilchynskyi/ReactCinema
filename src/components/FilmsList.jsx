@@ -1,7 +1,9 @@
 import React, { useEffect } from 'react';
-import { Table } from 'antd';
+import { Button, Popconfirm, Space, Table } from 'antd';
+import { useMessage } from '../hooks/useMessage';
+import { deleteFilm } from '../services/films.service';
 
-const columns = [
+const getColumns = (onDelete) => [
     {
         title: 'Poster',
         dataIndex: 'Poster',
@@ -26,6 +28,24 @@ const columns = [
         key: 'type',
         render: text => <span>{text}</span>,
     },
+    {
+        title: 'Actions',
+        key: 'actions',
+        render: (_, record) => (
+            <Space size="middle">
+                <Button type="primary">Edit</Button>
+                <Popconfirm
+                    title="Delete the film"
+                    description={`Are you sure to delete ${record.Title}?`}
+                    onConfirm={() => onDelete(record.imdbID)}
+                    okText="Yes"
+                    cancelText="No"
+                >
+                    <Button danger>Delete</Button>
+                </Popconfirm>
+            </Space>
+        ),
+    },
 ];
 
 const api = "https://www.omdbapi.com/?s=movies&apikey=9e3753ca&";
@@ -33,6 +53,7 @@ const api = "https://www.omdbapi.com/?s=movies&apikey=9e3753ca&";
 const FilmsList = () => {
 
     const [films, setFilms] = React.useState([]);
+    const { contextHolder, showSuccess, showError } = useMessage();
 
     useEffect(() => {
         fetchFilms();
@@ -46,10 +67,23 @@ const FilmsList = () => {
             setFilms(data.Search);
         })
     }
+
+    const onFilmDelete = async (imdbID) => {
+        const res = await deleteFilm(imdbID);
+        if (res) {
+            setFilms(films.filter(i => i.imdbID !== imdbID));
+
+            showSuccess('Film deleted successfully!');
+        }
+        else
+            showError('Failed to delete film!');
+    };
+
     return (
         <>
+            {contextHolder}
             <h2>FilmsList</h2>
-            <Table columns={columns} dataSource={films} />
+            <Table columns={getColumns(onFilmDelete)} dataSource={films} rowKey={i => i.imdbID}/>
         </>
     )
 };
