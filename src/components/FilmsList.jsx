@@ -1,32 +1,48 @@
 import React, { useEffect } from 'react';
-import { Button, Popconfirm, Space, Table } from 'antd';
+import { Button, Popconfirm, Rate, Space, Table } from 'antd';
 import { useMessage } from '../hooks/useMessage';
 import { deleteFilm } from '../services/films.service';
+
+const desc = ['terrible', 'bad', 'normal', 'good', 'wonderful'];
 
 const getColumns = (onDelete) => [
     {
         title: 'Poster',
-        dataIndex: 'Poster',
+        dataIndex: 'posterUrl',
         key: 'poster',
-        render: (text, record) => <img src={text} alt={record.Title} style={{ width: 100, height: 100 }} />,
+        render: (text, record) => <img src={text} alt={record.title} style={{ width: 100, height: 100 }} />,
     },
     {
         title: 'Title',
-        dataIndex: 'Title',
+        dataIndex: 'title',
         key: 'title',
         render: text => <a>{text}</a>,
     },
     {
         title: 'Year',
-        dataIndex: 'Year',
+        dataIndex: 'year',
         key: 'year',
         render: text => <span>{text}</span>,
     },
     {
-        title: 'Type',
-        dataIndex: 'Type',
-        key: 'type',
+        title: 'Genre',
+        dataIndex: 'genre',
+        key: 'genre',
         render: text => <span>{text}</span>,
+    },
+    {
+        title: 'Rating',
+        dataIndex: 'rating',
+        key: 'rating',
+        render: (rating) => {
+            const value = Math.round(rating / 2); // Якщо рейтинг від 0 до 10
+            return (
+                <div>
+                    <Rate disabled value={value} tooltips={desc} />
+                    {value ? <span style={{ marginLeft: 8 }}>{desc[value - 1]}</span> : null}
+                </div>
+            );
+        },
     },
     {
         title: 'Actions',
@@ -36,8 +52,8 @@ const getColumns = (onDelete) => [
                 <Button type="primary">Edit</Button>
                 <Popconfirm
                     title="Delete the film"
-                    description={`Are you sure to delete ${record.Title}?`}
-                    onConfirm={() => onDelete(record.imdbID)}
+                    description={`Are you sure to delete ${record.title}?`}
+                    onConfirm={() => onDelete(record.id)}
                     okText="Yes"
                     cancelText="No"
                 >
@@ -48,10 +64,9 @@ const getColumns = (onDelete) => [
     },
 ];
 
-const api = "https://www.omdbapi.com/?s=movies&apikey=9e3753ca&";
+const api = "https://68753704dd06792b9c97355a.mockapi.io/movies";
 
 const FilmsList = () => {
-
     const [films, setFilms] = React.useState([]);
     const { contextHolder, showSuccess, showError } = useMessage();
 
@@ -59,32 +74,34 @@ const FilmsList = () => {
         fetchFilms();
     }, []);
 
-
-    function fetchFilms()
-    {
-        fetch(api).then(res => res.json())
-        .then(data => {
-            setFilms(data.Search);
-        })
+    function fetchFilms() {
+        fetch(api)
+            .then(res => res.json())
+            .then(data => {
+                setFilms(data);
+            })
+            .catch(() => {
+                showError('Failed to load films!');
+            });
     }
 
-    const onFilmDelete = async (imdbID) => {
-        const res = await deleteFilm(imdbID);
+    const onFilmDelete = async (id) => {
+        const res = await deleteFilm(id);
         if (res) {
-            setFilms(films.filter(i => i.imdbID !== imdbID));
-
+            setFilms(films.filter(i => i.id !== id));
             showSuccess('Film deleted successfully!');
-        }
-        else
+        } else {
             showError('Failed to delete film!');
+        }
     };
 
     return (
         <>
             {contextHolder}
             <h2>FilmsList</h2>
-            <Table columns={getColumns(onFilmDelete)} dataSource={films} rowKey={i => i.imdbID}/>
+            <Table columns={getColumns(onFilmDelete)} dataSource={films} rowKey={i => i.id} />
         </>
-    )
+    );
 };
+
 export default FilmsList;

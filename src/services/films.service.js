@@ -1,8 +1,8 @@
 import { message } from "antd";
 
-const deleteFilm = async (imdbID) => {
+const deleteFilm = async (id) => {
     try {
-        const response = await fetch(`https://www.omdbapi.com/?i=${imdbID}&apikey=9e3753ca&`, {
+        const response = await fetch(`https://68753704dd06792b9c97355a.mockapi.io/movies/${id}`, {
             method: 'DELETE',
         });
         if (!response.ok) {
@@ -14,12 +14,5 @@ const deleteFilm = async (imdbID) => {
         return false;
     }
 }
-
-// const deleteFilm = async (imdbID) => {
-//     // Simulate API delay
-//     return new Promise((resolve) => {
-//         setTimeout(() => resolve(true), 500);
-//     });
-// };
 
 export { deleteFilm }
