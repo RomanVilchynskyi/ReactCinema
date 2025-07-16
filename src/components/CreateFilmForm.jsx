@@ -9,7 +9,8 @@ import {
     Space,
     Rate
 } from 'antd';
-import { createFilm, editFilm, loadGenres } from '../services/films.service';
+import { createFilm, editFilm, loadFilmById, loadGenres } from '../services/films.service';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useMessage } from '../hooks/useMessage';
 const { TextArea } = Input;
 
@@ -21,12 +22,22 @@ const tailLayout = {
     wrapperCol: { offset: 4, span: 16 },
 };
 
-const FilmForm = ({ initialValues = {}, onSubmit, onCancel }) => {
+const FilmForm = () => {
     const [genres, setGenres] = useState([]);
     const { contextHolder, showSuccess, showError } = useMessage();
+    const navigate = useNavigate();
+    let params = useParams();
+    const [editMode, setEditMode] = useState(false);
+
+    const [form] = Form.useForm();
 
     useEffect(() => {
         fetchGenres();
+
+        if (params.id) {
+            setEditMode(true);
+            loadFilms(params.id);
+        }
     }, []);
 
     async function fetchGenres() {
@@ -34,10 +45,38 @@ const FilmForm = ({ initialValues = {}, onSubmit, onCancel }) => {
         setGenres(data || []);
     }
 
+    async function loadFilms(id) {
+        const product = await loadFilmById(id);
+        form.setFieldsValue(product);
+    }
+
+    const onSubmit = async (item) => {
+        let res = false;
+
+        if (editMode) {
+            item.id = params.id;
+            res = await editFilm(item);
+        }
+        else {
+            res = await createFilm(item);
+        }
+
+        if (!res)
+            showError(`Failed to ${editMode ? "update" : "create"} film!`);
+        else {
+            showSuccess(`Film ${editMode ? "updated" : "created"} successfully!`);
+            // TODO: show success message globally
+            // navigate('/products');
+        }
+    }
+    const onCancel = () => {
+        navigate(-1);
+    };
+
     return (
         <>
             {contextHolder}
-            <h2>{initialValues.id ? 'Edit Film' : 'Create New Film'}</h2>
+            <h2>{editMode ? 'Edit Film' : 'Create New Film'}</h2>
 
             <Form
                 labelCol={{ span: 4 }}
@@ -45,7 +84,7 @@ const FilmForm = ({ initialValues = {}, onSubmit, onCancel }) => {
                 layout="horizontal"
                 style={{ maxWidth: 600 }}
                 onFinish={onSubmit}
-                initialValues={initialValues}
+                form={form}
             >
                 <Form.Item
                     name="posterUrl"
@@ -82,7 +121,7 @@ const FilmForm = ({ initialValues = {}, onSubmit, onCancel }) => {
                 <Form.Item {...tailLayout}>
                     <Space>
                         <Button type="primary" htmlType="submit">
-                            {initialValues.id ? 'Save' : 'Create'}
+                            {editMode ? "Edit" : "Create"}
                         </Button>
                         <Button htmlType="button" onClick={onCancel}>
                             Cancel

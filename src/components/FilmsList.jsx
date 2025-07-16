@@ -7,7 +7,7 @@ import FilmForm from './CreateFilmForm';
 
 const desc = ['terrible', 'bad', 'normal', 'good', 'wonderful'];
 
-const getColumns = (onDelete, onEdit) => [
+const getColumns = (onDelete) => [
     {
         title: 'Poster',
         dataIndex: 'posterUrl',
@@ -43,7 +43,7 @@ const getColumns = (onDelete, onEdit) => [
         dataIndex: 'rating',
         key: 'rating',
         render: (rating) => {
-            const value = Math.round(rating / 2); // Якщо рейтинг від 0 до 10
+            const value = Math.round(rating); // Якщо рейтинг від 0 до 10
             return (
                 <div>
                     <Rate disabled value={value} tooltips={desc} />
@@ -57,15 +57,9 @@ const getColumns = (onDelete, onEdit) => [
         key: 'actions',
         render: (_, record) => (
             <Space size="middle">
-                <Popconfirm
-                    title="Edit film?"
-                    description={`Are you sure to edit ${record.title}?`}
-                    onConfirm={() => onEdit(record.id)}
-                    okText="Yes"
-                    cancelText="No"
-                >
+                 <Link to={`/edit/${record.id}`}>
                     <Button type="primary">Edit</Button>
-                </Popconfirm>
+                </Link>
                 <Popconfirm
                     title="Delete the film"
                     description={`Are you sure to delete ${record.title}?`}
@@ -85,8 +79,6 @@ const api = "https://68753704dd06792b9c97355a.mockapi.io/movies";
 const FilmsList = () => {
     const [films, setFilms] = React.useState([]);
     const { contextHolder, showSuccess, showError } = useMessage();
-    const [editingFilm, setEditingFilm] = useState(null);
-    const [editModalVisible, setEditModalVisible] = useState(false);
 
 
     useEffect(() => {
@@ -114,53 +106,7 @@ const FilmsList = () => {
         }
     };
 
-    const onFilmEdit = async (id) => {
-        const film = await loadFilmById(id);
-        if (film) {
-            setEditingFilm(film);
-            setEditModalVisible(true);
-        } else {
-            showError('Failed to load film for editing!');
-        }
-    };
-
-    const handleSubmit = async (filmData) => {
-        if (editingFilm && editingFilm.id) {
-            const updated = await editFilm({ ...filmData, id: editingFilm.id });
-            if (updated) {
-                showSuccess('Film updated successfully!');
-                setEditModalVisible(false);
-                setEditingFilm(null);
-                fetchFilms();
-            } else {
-                showError('Failed to update film!');
-            }
-        } else {
-            const created = await createFilm(filmData);
-            if (created) {
-                showSuccess('Film created successfully!');
-            } else {
-                showError('Failed to create film!');
-            }
-        }
-
-        // const [operationSuccess, setOperationSuccess] = useState(null);
-
-        // useEffect(() => {
-        //     if (operationSuccess === true) {
-        //         showSuccess('Операція успішна!');
-        //         // Закрити модалку, очистити стан і т.п.
-        //     } else if (operationSuccess === false) {
-        //         showError('Сталася помилка!');
-        //     }
-        //     // Очищаємо стан, щоб не показувати повторно
-        //     return () => setOperationSuccess(null);
-        // }, [operationSuccess]);
-
-
-
-    };
-
+    
 
     return (
         <>
@@ -171,24 +117,7 @@ const FilmsList = () => {
                 <Button type="primary" style={{ marginBottom: '12px' }}>Create New Film</Button>
             </Link>
 
-            <Table columns={getColumns(onFilmDelete, onFilmEdit)} dataSource={films} rowKey={i => i.id} />
-
-            {editModalVisible && (
-                <FilmForm
-                    initialValues={editingFilm ? {
-                        ...editingFilm,
-                        rating: editingFilm.rating ? editingFilm.rating / 2 : 0,
-                        posterUrl: editingFilm.posterUrl || ''
-                    } : {}}
-                    onCancel={() => {
-                        setEditModalVisible(false);
-                        setEditingFilm(null);
-                        fetchFilms();
-                    }}
-                    onSubmit={handleSubmit}
-                />
-            )}
-
+            <Table columns={getColumns(onFilmDelete)} dataSource={films} rowKey={i => i.id} />
 
         </>
     );
