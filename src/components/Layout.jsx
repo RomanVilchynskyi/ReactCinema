@@ -1,31 +1,37 @@
 import React from 'react';
 import { Breadcrumb, Layout as LayoutAntd, Menu, theme } from 'antd';
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, useLocation } from 'react-router-dom';
 
 const { Header, Content, Footer } = LayoutAntd;
+
 
 import {
     DatabaseFilled,
     HomeFilled,
 } from '@ant-design/icons';
+import { useFavorite } from '../context/favorite.context';
 
 const items = [
     {
-        key: '1',
+        key: '/',
         label: <Link to="/">Home</Link>,
         icon: <HomeFilled />
     },
     {
-        key: '2',
+        key: '/films',
         label: <Link to="/films">Films</Link>,
         icon: <DatabaseFilled />,
     },
 ];
 
 const Layout = () => {
+    const location = useLocation();
+    const { favorites } = useFavorite();
+
     const {
         token: { colorBgContainer, borderRadiusLG },
     } = theme.useToken();
+
     return (
         <LayoutAntd className='Layout'>
             <Header style={{ display: 'flex', alignItems: 'center' }}>
@@ -34,9 +40,14 @@ const Layout = () => {
                     theme="dark"
                     mode="horizontal"
                     defaultSelectedKeys={['1']}
+                    selectedKeys={[location.pathname]}
                     items={items}
-                    style={{ flex: 1, minWidth: 0 }}
+                    style={{ flex: 1}}
                 />
+                
+                <div style={{ color: 'white', marginRight: '16px', fontWeight: 'bold' }}>
+                    ❤️ Favorites: {favorites.length}
+                </div>
             </Header>
             <Content style={{ padding: '0 48px' }}>
                 <Breadcrumb

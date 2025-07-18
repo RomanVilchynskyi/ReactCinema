@@ -4,10 +4,11 @@ import { useMessage } from '../hooks/useMessage';
 import { deleteFilm, editFilm, loadFilmById } from '../services/films.service';
 import { Link } from 'react-router-dom';
 import FilmForm from './CreateFilmForm';
+import { LikeOutlined } from '@ant-design/icons';
 
 const desc = ['terrible', 'bad', 'normal', 'good', 'wonderful'];
 
-const getColumns = (onDelete) => [
+const getColumns = (onDelete, onToggleFavorite, isFavorite) => [
     {
         title: 'Poster',
         dataIndex: 'posterUrl',
@@ -53,11 +54,27 @@ const getColumns = (onDelete) => [
         },
     },
     {
+        title: 'Favotite',
+        dataIndex: 'favorite',
+        key: 'favorite',
+        render: (_, record) => (
+            isFavorite(record.id) ? (
+                <Button danger onClick={() => onToggleFavorite(record)}>
+                    Cancel Favorite
+                </Button>
+            ) : (
+                <Button icon={<LikeOutlined />} onClick={() => onToggleFavorite(record)}>
+                    Add to Favorite
+                </Button>
+            )
+        )
+    },
+    {
         title: 'Actions',
         key: 'actions',
         render: (_, record) => (
             <Space size="middle">
-                 <Link to={`/edit/${record.id}`}>
+                <Link to={`/edit/${record.id}`}>
                     <Button type="primary">Edit</Button>
                 </Link>
                 <Popconfirm
@@ -89,7 +106,12 @@ const FilmsList = () => {
         fetch(api)
             .then(res => res.json())
             .then(data => {
-                setFilms(data);
+                // Ініціалізуємо поле favorite, якщо його немає
+                const filmsWithFavorite = data.map(film => ({
+                    ...film,
+                    favorite: film.favorite ?? false,
+                }));
+                setFilms(filmsWithFavorite);
             })
             .catch(() => {
                 showError('Failed to load films!');
@@ -106,7 +128,33 @@ const FilmsList = () => {
         }
     };
 
+    const onToggleFavorite = async (film) => {
+        try {
+            const updatedFilm = { ...film, favorite: !film.favorite };
+            console.log('Updating favorite:', updatedFilm);
+            const result = await editFilm(updatedFilm);
+            console.log('Result from API:', result);
     
+            if (result) {
+                setFilms(prevFilms => prevFilms.map(f => f.id === film.id ? updatedFilm : f));
+                showSuccess(`"${film.title}" favorite status updated!`);
+            } else {
+                showError('Failed to update favorite status!');
+            }
+        } catch (e) {
+            showError('Failed to update favorite status!');
+            console.error(e);
+        }
+    };
+    
+    
+
+    const isFavorite = (id) => {
+        const film = films.find(f => f.id === id);
+        return film ? film.favorite : false;
+    };
+    
+
 
     return (
         <>
@@ -117,7 +165,7 @@ const FilmsList = () => {
                 <Button type="primary" style={{ marginBottom: '12px' }}>Create New Film</Button>
             </Link>
 
-            <Table columns={getColumns(onFilmDelete)} dataSource={films} rowKey={i => i.id} />
+            <Table columns={getColumns(onFilmDelete, onToggleFavorite, isFavorite)} dataSource={films} rowKey={i => i.id} />
 
         </>
     );
