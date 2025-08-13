@@ -1,24 +1,42 @@
-import { createContext, useContext, useState } from 'react';
 
-const FavoriteContext = createContext();
+
+import { createContext, useEffect, useState } from "react";
+import { addProductToFav, getFavProducts, removeProductFromFav } from "../services/favorite.service";
+
+export const FavoriteContext = createContext({
+    // properties
+    ids: [],
+    // methods
+    add: (id) => null,
+    remove: (id) => null,
+    isFav: (id) => null,
+    getCount: () => null
+});
 
 export const FavoriteProvider = ({ children }) => {
-  const [favorites, setFavorites] = useState([]); 
 
-  const toggleFavorite = (filmId) => {
-    setFavorites(prev =>
-      prev.includes(filmId) ? prev.filter(id => id !== filmId) : [...prev, filmId]
-    );
-  };
+    const [ids, setIds] = useState([]);
 
-  const isFavorite = (filmId) => favorites.includes(filmId);
+    useEffect(() => {
+        updateIds();
+    }, []);
 
-  return (
-    <FavoriteContext.Provider value={{ favorites, toggleFavorite, isFavorite }}>
-      {children}
-    </FavoriteContext.Provider>
-  );
-};
+    const add = (id) => {
+        addProductToFav(id);
+        updateIds();
+    }
+    const remove = (id) => {
+        removeProductFromFav(id);
+        updateIds();
+    }
+    const isFav = (id) => ids.includes(id);
+    const getCount = () => ids.length;
 
-export const useFavorite = () => useContext(FavoriteContext);
+    function updateIds() {
+        setIds(getFavProducts());
+    }
 
+    const value = { ids, add, remove, isFav, getCount };
+
+    return <FavoriteContext.Provider value={value}>{children}</FavoriteContext.Provider>
+}

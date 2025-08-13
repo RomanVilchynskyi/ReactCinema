@@ -10,29 +10,33 @@ import {
     HomeFilled,
     LikeOutlined,
 } from '@ant-design/icons';
-import { useFavorite } from '../context/favorite.context';
+import { useContext } from 'react';
+import { FavoriteContext } from '../context/favorite.context';
 
-const items = [
-    {
-        key: '/',
-        label: <Link to="/">Home</Link>,
-        icon: <HomeFilled />
-    },
-    {
-        key: '/films',
-        label: <Link to="/films">Films</Link>,
-        icon: <DatabaseFilled />,
-    },
-    {
-        key: '/liked',
-        label: <Link to="/liked">Films</Link>,
-        icon: <LikeOutlined />,
-    },
-];
 
 const Layout = () => {
     const location = useLocation();
-    const { favorites } = useFavorite();
+    const { getCount } = useContext(FavoriteContext);
+
+
+    const items = [
+        {
+            key: '/',
+            label: <Link to="/">Home</Link>,
+            icon: <HomeFilled />
+        },
+        {
+            key: '/films',
+            label: <Link to="/films">Films</Link>,
+            icon: <DatabaseFilled />,
+        },
+        {
+            key: '/liked',
+            label: <Link to="/liked">Films ({getCount()})</Link>,
+            icon: <LikeOutlined />,
+        },
+    ];
+    
 
     const {
         token: { colorBgContainer, borderRadiusLG },
@@ -51,9 +55,7 @@ const Layout = () => {
                     style={{ flex: 1}}
                 />
                 
-                <div style={{ color: 'white', marginRight: '16px', fontWeight: 'bold' }}>
-                    ❤️ Favorites: {favorites.length}
-                </div>
+
             </Header>
             <Content style={{ padding: '0 48px' }}>
                 <Breadcrumb

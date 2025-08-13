@@ -53,22 +53,7 @@ const getColumns = (onDelete, onToggleFavorite, isFavorite) => [
             );
         },
     },
-    {
-        title: 'Favotite',
-        dataIndex: 'favorite',
-        key: 'favorite',
-        render: (_, record) => (
-            isFavorite(record.id) ? (
-                <Button danger onClick={() => onToggleFavorite(record)}>
-                    Cancel Favorite
-                </Button>
-            ) : (
-                <Button icon={<LikeOutlined />} onClick={() => onToggleFavorite(record)}>
-                    Add to Favorite
-                </Button>
-            )
-        )
-    },
+
     {
         title: 'Actions',
         key: 'actions',
