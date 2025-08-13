@@ -8,6 +8,7 @@ const { Header, Content, Footer } = LayoutAntd;
 import {
     DatabaseFilled,
     HomeFilled,
+    LikeOutlined,
 } from '@ant-design/icons';
 import { useFavorite } from '../context/favorite.context';
 
@@ -21,6 +22,11 @@ const items = [
         key: '/films',
         label: <Link to="/films">Films</Link>,
         icon: <DatabaseFilled />,
+    },
+    {
+        key: '/liked',
+        label: <Link to="/liked">Films</Link>,
+        icon: <LikeOutlined />,
     },
 ];
 
