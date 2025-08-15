@@ -32,7 +32,7 @@ const Layout = () => {
         },
         {
             key: '/liked',
-            label: <Link to="/liked">Films ({getCount()})</Link>,
+            label: <Link to="/liked">Liked ({getCount()})</Link>,
             icon: <LikeOutlined />,
         },
     ];

@@ -24,8 +24,31 @@ export default function Home() {
     async function fetchProducts() {
         const res = await fetch(api);
         const data = await res.json();
-        setProducts(data);
+
+        const withSessions = data.map(m => ({
+            ...m,
+            sessions: Array.isArray(m.sessions) ? m.sessions : []
+          }));
+
+        setProducts(withSessions);
     }
+
+
+    const sessionButton = (movie) => (startISO) => (
+        <Button
+          size="small"
+          onClick={(e) => {
+            e.stopPropagation();
+            dispatch(addFavoriteSession({
+              movieId: String(movie.id),
+              movieTitle: movie.title,
+              start: startISO
+            }));
+          }}
+        >
+          Додати у вибране
+        </Button>
+      );
 
     return (
         <div style={{ textAlign: 'center', padding: '20px' }}>
@@ -33,11 +56,11 @@ export default function Home() {
                 {products.map(i =>
                     <Col className="gutter-row" span={6}>
                         {/* <Link to={`/details/${i.id}`}> */}
-                            <Card
-                                hoverable
-                                style={{ width: 240, minHeight: '100%', backgroundColor: '#f0f2f5', padding: '10px' }}
-                                cover={<img alt={i.title} src={i.posterUrl} height={260} style={{ objectFit: "contain" }} />}
-                                 actions={
+                        <Card
+                            hoverable
+                            style={{ width: 240, minHeight: '100%', backgroundColor: '#f0f2f5', padding: '10px' }}
+                            cover={<img alt={i.title} src={i.posterUrl} height={260} style={{ objectFit: "contain" }} />}
+                            actions={
 
                                 [
                                     isFav(i.id) ?
@@ -54,9 +77,31 @@ export default function Home() {
                                 ]
 
                             }
-                            >
-                                <Meta title={i.title} description={`${i.description}$ - ${i.rating}⭐`} />
-                            </Card>
+                        >
+                            <Meta title={i.title} description={
+                                <>
+                                {`${i.description} - ${i.rating}⭐`}
+            
+                                {/* Список сеансів */}
+                                {Array.isArray(i.sessions) && i.sessions.length > 0 && (
+                                  <div style={{ marginTop: 8, textAlign: 'left' }}>
+                                    <div><strong>Сеанси:</strong></div>
+                                    <Space direction="vertical" size={6} style={{ width: '100%' }}>
+                                      {i.sessions.map(s => (
+                                        <div key={s} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                          <Tag>{new Date(s).toLocaleString('uk-UA', {
+                                            year: 'numeric', month: '2-digit', day: '2-digit',
+                                            hour: '2-digit', minute: '2-digit'
+                                          })}</Tag>
+                                          {sessionButton(i)(s)}
+                                        </div>
+                                      ))}
+                                    </Space>
+                                  </div>
+                                )}
+                              </>
+                            } />
+                        </Card>
                         {/* </Link> */}
                     </Col>
                 )}
