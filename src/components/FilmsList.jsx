@@ -28,6 +28,32 @@ const getColumns = (onDelete, onToggleFavorite, isFavorite) => [
         render: text => <a>{text}</a>,
     },
     {
+  title: 'Trailer',
+  dataIndex: 'trailerUrl',
+  key: 'trailer',
+  render: (url) => {
+    if (!url) return "No trailer";
+
+    // замінюємо "watch?v=" на "embed/"
+    const embedUrl = url.replace("watch?v=", "embed/");
+
+    return (
+      <iframe
+        width="200"
+        height="120"
+        src={embedUrl}
+        title="Trailer"
+        frameBorder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+      />
+    );
+  },
+}
+
+    ,
+
+    {
         title: 'Year',
         dataIndex: 'year',
         key: 'year',
@@ -119,7 +145,7 @@ const FilmsList = () => {
             console.log('Updating favorite:', updatedFilm);
             const result = await editFilm(updatedFilm);
             console.log('Result from API:', result);
-    
+
             if (result) {
                 setFilms(prevFilms => prevFilms.map(f => f.id === film.id ? updatedFilm : f));
                 showSuccess(`"${film.title}" favorite status updated!`);
@@ -131,14 +157,14 @@ const FilmsList = () => {
             console.error(e);
         }
     };
-    
-    
+
+
 
     const isFavorite = (id) => {
         const film = films.find(f => f.id === id);
         return film ? film.favorite : false;
     };
-    
+
 
 
     return (

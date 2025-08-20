@@ -51,24 +51,25 @@ const FilmForm = () => {
     }
 
     const onSubmit = async (item) => {
-        let res = false;
-
-        if (editMode) {
-            item.id = params.id;
-            res = await editFilm(item);
-        }
-        else {
-            res = await createFilm(item);
-        }
-
-        if (!res)
-            showError(`Failed to ${editMode ? "update" : "create"} film!`);
-        else {
-            showSuccess(`Film ${editMode ? "updated" : "created"} successfully!`);
-            // TODO: show success message globally
-            // navigate('/products');
-        }
+    if (item.trailerUrl) {
+        item.trailerUrl = item.trailerUrl.replace("watch?v=", "embed/");
     }
+
+    let res = false;
+    if (editMode) {
+        item.id = params.id;
+        res = await editFilm(item);
+    } else {
+        res = await createFilm(item);
+    }
+
+    if (!res) {
+        showError(`Failed to ${editMode ? "update" : "create"} film!`);
+    } else {
+        showSuccess(`Film ${editMode ? "updated" : "created"} successfully!`);
+    }
+};
+
     const onCancel = () => {
         navigate(-1);
     };
@@ -91,6 +92,12 @@ const FilmForm = () => {
                     label="Film poster URL"
                 >
                     <Input placeholder="Enter poster image URL" />
+                </Form.Item>
+                <Form.Item
+                    name="trailerUrl"
+                    label="Film trailer URL"
+                >
+                    <Input placeholder="Enter film trailer URL" />
                 </Form.Item>
 
                 <Form.Item label="Title" name="title">
