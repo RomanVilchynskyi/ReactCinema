@@ -123,14 +123,14 @@ export default function Home() {
               }
               actions={[
                 isFav(i.id) ?
-                  <LikeOutlined key="fav-no"
-                    style={{ color: '#eb2f96' }}
+                  <LikeFilled key="fav-no"
+                    style={{ color: '#2589d0ff' }}
                     onClick={e => {
                       e.stopPropagation(); // щоб клік не пішов на карточку
                       remove(i.id);
                     }} />
                   :
-                  <LikeFilled twoToneColor="#eb2f96" key="fav-yes"
+                  <LikeOutlined key="fav-yes"
                     onClick={e => {
                       e.stopPropagation();
                       add(i.id);
