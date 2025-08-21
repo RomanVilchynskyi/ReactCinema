@@ -28,30 +28,28 @@ const getColumns = (onDelete, onToggleFavorite, isFavorite) => [
         render: text => <a>{text}</a>,
     },
     {
-  title: 'Trailer',
-  dataIndex: 'trailerUrl',
-  key: 'trailer',
-  render: (url) => {
-    if (!url) return "No trailer";
+        title: 'Trailer',
+        dataIndex: 'trailerUrl',
+        key: 'trailer',
+        render: (url) => {
+            if (!url) return "No trailer";
 
-    // замінюємо "watch?v=" на "embed/"
-    const embedUrl = url.replace("watch?v=", "embed/");
+            // замінюємо "watch?v=" на "embed/"
+            const embedUrl = url.replace("watch?v=", "embed/");
 
-    return (
-      <iframe
-        width="200"
-        height="120"
-        src={embedUrl}
-        title="Trailer"
-        frameBorder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowFullScreen
-      />
-    );
-  },
-}
-
-    ,
+            return (
+                <iframe
+                    width="200"
+                    height="120"
+                    src={embedUrl}
+                    title="Trailer"
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                />
+            );
+        },
+    },
 
     {
         title: 'Year',
@@ -79,7 +77,12 @@ const getColumns = (onDelete, onToggleFavorite, isFavorite) => [
             );
         },
     },
-
+    {
+        title: 'Sessions',
+        dataIndex: 'startTime',
+        key: 'startTime',
+        render: text => <span>{text}</span>,
+    },
     {
         title: 'Actions',
         key: 'actions',

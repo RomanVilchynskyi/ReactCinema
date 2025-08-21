@@ -6,6 +6,7 @@ const { Header, Content, Footer } = LayoutAntd;
 
 
 import {
+    ClockCircleOutlined,
     DatabaseFilled,
     HomeFilled,
     LikeOutlined,
@@ -35,8 +36,13 @@ const Layout = () => {
             label: <Link to="/liked">Liked ({getCount()})</Link>,
             icon: <LikeOutlined />,
         },
+        {
+            key: '/sessions',
+            label: <Link to="/sessions">Sessions</Link>,
+            icon: <ClockCircleOutlined />,
+        },
     ];
-    
+
 
     const {
         token: { colorBgContainer, borderRadiusLG },
@@ -52,9 +58,9 @@ const Layout = () => {
                     defaultSelectedKeys={['1']}
                     selectedKeys={[location.pathname]}
                     items={items}
-                    style={{ flex: 1}}
+                    style={{ flex: 1 }}
                 />
-                
+
 
             </Header>
             <Content style={{ padding: '0 48px' }}>

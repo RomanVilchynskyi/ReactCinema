@@ -1,4 +1,4 @@
-const key = 'fav-products';
+const key = 'fav-movies';
 
 const addProductToFav = (id) => {
     let arr = [...getFavProducts(), id];

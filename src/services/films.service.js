@@ -61,5 +61,16 @@ const editFilm = async (model) => {
     }
 }
 
+const searchFilm = async (query) => {
+  try {
+    const res = await axios.get(`${api}movies`, { params: { q: query } });
+    return res.data;
+  } catch (error) {
+    console.error('Error searching film:', error);
+    return [];
+  }
+};
 
-export { deleteFilm, loadGenres, createFilm, loadFilmById ,editFilm }
+
+
+export { deleteFilm, loadGenres, createFilm, loadFilmById ,editFilm, searchFilm }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Card, Col, Row } from 'antd';
+import { Card, Col, Flex, Input, Row, Select, Space } from 'antd';
 import { Link } from 'react-router-dom';
 import {
   LikeOutlined,
@@ -16,6 +16,7 @@ const api = import.meta.env.VITE_API_PATH + 'movies';
 export default function Home() {
   const [products, setProducts] = useState([]);
   const { add, remove, isFav } = useContext(FavoriteContext);
+  const [filtered, setFiltered] = useState([]);
 
   useEffect(() => {
     fetchProducts();
@@ -31,6 +32,7 @@ export default function Home() {
     }));
 
     setProducts(withSessions);
+    setFiltered(withSessions);
   }
 
 
@@ -52,9 +54,65 @@ export default function Home() {
 
   return (
     <div style={{ textAlign: 'center', padding: '20px' }}>
+      <Flex gap={30} style={{ marginBottom: 40 }}>
+        <Input.Search
+          placeholder="Введіть назву фільму"
+          variant="outlined"
+          style={{ width: "300px" }}
+          allowClear
+          onSearch={(value) => {
+            if (!value) {
+              setFiltered(products);
+            } else {
+              const result = products.filter(p =>
+                p.title.toLowerCase().includes(value.toLowerCase())
+              );
+              setFiltered(result);
+            }
+          }}
+          onChange={(e) => {
+            const value = e.target.value;
+            if (!value) {
+              setFiltered(products);
+            }
+          }}
+        />
+
+        <Select
+          defaultValue=""
+          style={{ width: 120 }}
+          allowClear
+          options={[
+            { value: "sci-fi", label: "Sci-Fi" },
+            { value: "drama", label: "Drama" },
+            { value: "adventure", label: "Adventure" },
+            { value: "action", label: "Action" },
+            { value: "romance", label: "Romance" },
+            { value: "crime", label: "Crime" },
+            { value: "animation", label: "Animation" },
+            { value: "mystery", label: "Mystery" },
+            { value: "biography", label: "Biography" },
+            { value: "musical", label: "Musical" },
+            { value: "thriller", label: "Thriller" },
+            { value: "comedy", label: "Comedy" }
+          ]}
+          placeholder="Виберіть"
+          onChange={(value) => {
+            if (!value) {
+              setFiltered(products); // якщо стерли вибір → показати всі
+            } else {
+              const result = products.filter(p =>
+                p.genre.toLowerCase() === value.toLowerCase()
+              );
+              setFiltered(result);
+            }
+          }}
+        />
+      </Flex>
+
       <Row gutter={[16, 20]}>
-        {products.map(i =>
-          <Col className="gutter-row" span={6}>
+        {filtered.map(i =>
+          <Col className="gutter-row" span={6} key={i.id}>
             <Card
               hoverable
               style={{ width: 240, minHeight: '100%', backgroundColor: '#f0f2f5', padding: '10px' }}

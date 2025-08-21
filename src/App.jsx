@@ -10,6 +10,7 @@ import Home from './components/Home'
 import CreateFilmForm from './components/CreateFilmForm'
 import FavoriteFilms from './components/FavoriteFilms'
 import DetailFilmInfo from './components/DetailFilmInfo'
+import FilmSessions from './components/FilmSessions'
 
 function App() {
 
@@ -23,6 +24,7 @@ function App() {
           <Route path="edit/:id" element={<CreateFilmForm />} />
           <Route path="details/:id" element={<DetailFilmInfo />} />
           <Route path='liked' element={<FavoriteFilms />} />
+          <Route path='sessions' element={<FilmSessions />} />
           <Route path="*" element={<NoPage />} />
         </Route>
       </Routes>

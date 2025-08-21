@@ -120,6 +120,9 @@ const FilmForm = () => {
                         }))}
                     />
                 </Form.Item>
+                 <Form.Item label="Sessions" name="startTime">
+                    <Input />
+                </Form.Item>
 
                 <Form.Item label="Rating" name="rating">
                     <Rate />
