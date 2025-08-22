@@ -12,7 +12,6 @@ export default function FavoriteMovies() {
   useEffect(() => {
     fetchProducts();
 
-    // отримуємо id улюблених з localStorage
     const favIds = JSON.parse(localStorage.getItem("fav-movies")) || [];
     setFavorites(favIds);
   }, []);
@@ -30,7 +29,6 @@ export default function FavoriteMovies() {
     }
   }
 
-  // залишаємо тільки ті фільми, що у favorites
   const favoriteMovies = products.filter(p => favorites.includes(String(p.id)));
 
   return (

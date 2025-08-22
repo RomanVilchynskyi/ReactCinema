@@ -34,7 +34,6 @@ const getColumns = (onDelete, onToggleFavorite, isFavorite) => [
         render: (url) => {
             if (!url) return "No trailer";
 
-            // замінюємо "watch?v=" на "embed/"
             const embedUrl = url.replace("watch?v=", "embed/");
 
             return (
@@ -68,7 +67,7 @@ const getColumns = (onDelete, onToggleFavorite, isFavorite) => [
         dataIndex: 'rating',
         key: 'rating',
         render: (rating) => {
-            const value = Math.round(rating); // Якщо рейтинг від 0 до 10
+            const value = Math.round(rating); 
             return (
                 <div>
                     <Rate disabled value={value} tooltips={desc} />
@@ -120,7 +119,6 @@ const FilmsList = () => {
         fetch(api)
             .then(res => res.json())
             .then(data => {
-                // Ініціалізуємо поле favorite, якщо його немає
                 const filmsWithFavorite = data.map(film => ({
                     ...film,
                     favorite: film.favorite ?? false,

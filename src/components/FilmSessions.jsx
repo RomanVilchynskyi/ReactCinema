@@ -32,19 +32,16 @@ export default function FilmSessions() {
   const applyFilters = (genreValue, dateValue, order) => {
     let filteredFilms = [...films];
 
-    // Фільтр по жанру
     if (genreValue) {
       filteredFilms = filteredFilms.filter(film => film.genre === genreValue);
     }
 
-    // Фільтр по даті
     if (dateValue) {
       filteredFilms = filteredFilms.filter(film =>
         dayjs(film.startTime).isSame(dateValue, 'day')
       );
     }
 
-    // Сортування по часу
     filteredFilms.sort((a, b) => {
       const aTime = new Date(a.startTime);
       const bTime = new Date(b.startTime);
@@ -73,7 +70,7 @@ export default function FilmSessions() {
     <div style={{ padding: 20 }}>
       <Space style={{ marginBottom: 20 }}>
         <Select
-          placeholder="Фільтр за жанром"
+          placeholder="Film by genre"
           allowClear
           style={{ width: 150 }}
           onChange={handleGenreFilter}
@@ -94,18 +91,18 @@ export default function FilmSessions() {
         />
 
         <DatePicker
-          placeholder="Виберіть дату"
+          placeholder="Choose date"
           onChange={handleDateChange}
         />
 
         <Select
-          placeholder="Сортування по часу"
+          placeholder="Sort by time"
           style={{ width: 180 }}
           defaultValue="asc"
           onChange={handleSort}
           options={[
-            { value: 'asc', label: 'За зростанням' },
-            { value: 'desc', label: 'За спаданням' }
+            { value: 'asc', label: 'For ascend' },
+            { value: 'desc', label: 'For decsent' }
           ]}
         />
       </Space>

@@ -99,7 +99,7 @@ export default function Home() {
           placeholder="Виберіть"
           onChange={(value) => {
             if (!value) {
-              setFiltered(products); // якщо стерли вибір → показати всі
+              setFiltered(products); 
             } else {
               const result = products.filter(p =>
                 p.genre.toLowerCase() === value.toLowerCase()
@@ -126,7 +126,7 @@ export default function Home() {
                   <LikeFilled key="fav-no"
                     style={{ color: '#2589d0ff' }}
                     onClick={e => {
-                      e.stopPropagation(); // щоб клік не пішов на карточку
+                      e.stopPropagation(); 
                       remove(i.id);
                     }} />
                   :

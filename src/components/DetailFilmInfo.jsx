@@ -5,7 +5,7 @@ import { Card, Rate, Tag, Button } from 'antd';
 
 const { Meta } = Card;
 
-const api = import.meta.env.VITE_API_PATH; // базовий URL API
+const api = import.meta.env.VITE_API_PATH; 
 
 export default function FilmDetailPage() {
   const { id } = useParams();
@@ -34,9 +34,9 @@ export default function FilmDetailPage() {
     fetchFilm();
   }, [id]);
 
-  if (loading) return <div>Завантаження фільму...</div>;
+  if (loading) return <div>Downloading film...</div>;
   if (error) return <div>{error}</div>;
-  if (!film) return <div>Фільм не знайдено</div>;
+  if (!film) return <div>Film not found</div>;
 
   return (
     <Card
